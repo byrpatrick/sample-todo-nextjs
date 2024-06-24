@@ -5,3 +5,7 @@ node_modules/
 .next
 .zenstack_repl_history
 .idea
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
