@@ -18,13 +18,7 @@ export default function NavBar({ user, space }: Props) {
     return (
         <div className="navbar bg-base-100 px-8 py-2 border-b">
             <div className="flex-1">
-                <Link href="/" className="flex items-center">
-                    <Image src="/logo.png" alt="Logo" width={32} height={32} />
-                    <div className="text-xl font-semibold ml-2 text-slate-700 hidden md:inline-block">
-                        {space?.name || 'Welcome Todo App'}
-                    </div>
-                    <p className="text-xs ml-2 text-gray-500 self-end">Powered by ZenStack</p>
-                </Link>
+                <h1 className="text-3xl mb-4 mt-4">{space?.name || 'Welcome Todo App'}</h1>
             </div>
             <div className="flex-none">
                 <div className="dropdown dropdown-end">

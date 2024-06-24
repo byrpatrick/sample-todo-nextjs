@@ -132,6 +132,7 @@ export default function SpaceHome(props: Props) {
         {
             disabled: !router.query.slug,
             fallbackData: props.lists,
+            refreshInterval: 5000,
         }
     );
 

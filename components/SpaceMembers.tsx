@@ -1,8 +1,6 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { useCurrentSpace } from '@lib/context';
 import { useFindManySpaceUser } from '@lib/hooks';
 import { Space } from '@prisma/client';
-import Avatar from './Avatar';
 import ManageMembers from './ManageMembers';
 
 function ManagementDialog(space?: Space) {
@@ -10,7 +8,7 @@ function ManagementDialog(space?: Space) {
     return (
         <>
             <label htmlFor="management-modal" className="modal-button">
-                <PlusIcon className="w-6 h-6 text-gray-500 cursor-pointer mr-1" />
+                + Add collaborator
             </label>
 
             <input type="checkbox" id="management-modal" className="modal-toggle" />
@@ -54,13 +52,6 @@ export default function SpaceMembers() {
     return (
         <div className="flex items-center">
             {ManagementDialog(space)}
-            {members && (
-                <label className="mr-1 modal-button cursor-pointer" htmlFor="management-modal">
-                    {members?.map((member) => (
-                        <Avatar key={member.id} user={member.user} size={24} />
-                    ))}
-                </label>
-            )}
         </div>
     );
 }

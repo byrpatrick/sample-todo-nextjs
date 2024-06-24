@@ -48,6 +48,8 @@ export default function ManageMembers({ space }: Props) {
                 },
             });
             console.log('SpaceUser created:', r);
+ 
+            toast.success('User added to the space successfully!');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error(err);
@@ -112,7 +114,7 @@ export default function ManageMembers({ space }: Props) {
                             <div className="hidden md:block mr-2">
                                 <Avatar user={member.user} size={32} />
                             </div>
-                            <p className="w-36 md:w-48 line-clamp-1 mr-2">{member.user.name || member.user.email}</p>
+                            <p className="w-72 md:w-72 line-clamp-1 mr-2">{member.user.name || member.user.email}</p>
                             <p>{member.role}</p>
                         </div>
                         <div className="flex items-center">
