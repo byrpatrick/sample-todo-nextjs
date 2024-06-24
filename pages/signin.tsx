@@ -96,15 +96,7 @@ export default function Signup() {
                             <button className="btn btn-primary w-full lg:w-fit" type="submit">
                                 Login to your account
                             </button>
-
-                            <div
-                                className="btn btn-outline w-full lg:w-fit"
-                                onClick={() => void signIn('github', { callbackUrl: '/' })}
-                            >
-                                Sign in with GitHub
-                            </div>
                         </div>
-
                         <div className="mt-4 text-sm font-medium text-gray-500">
                             Not registered?{' '}
                             <Link href="/signup" className="text-primary">

@@ -4,7 +4,6 @@ import { compare } from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import GitHubProvider from 'next-auth/providers/github';
 import { prisma } from 'server/db';
 
 export const authOptions: NextAuthOptions = {
@@ -29,14 +28,6 @@ export const authOptions: NextAuthOptions = {
                 },
             },
             authorize: authorize(prisma),
-        }),
-
-        GitHubProvider({
-            clientId: process.env.GITHUB_ID!,
-            clientSecret: process.env.GITHUB_SECRET!,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            scope: 'read:user,user:email',
         }),
     ],
 
