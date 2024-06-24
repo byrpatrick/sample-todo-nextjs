@@ -1,12 +1,8 @@
 import test, { expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { createUser, resetDatabase } from './db.utils';
+import { createUser, deleteUser } from './db.utils';
 
 const baseUrl = 'http://localhost:3000';
-
-test.beforeEach(async () => {
-  await resetDatabase();
-});
 
 test('can login as existing user', async ({ page }) => {
   const password = '123456789';
@@ -28,6 +24,8 @@ test('can login as existing user', async ({ page }) => {
 
   await page.waitForURL(baseUrl);
   await expect(page.getByRole('heading', { name: `Welcome ${existingUser.email}` })).toBeVisible();
+
+  await deleteUser(existingUser.email);
 });
 
 test('can create a free account', async ({ page }) => {
@@ -55,4 +53,6 @@ test('can create a free account', async ({ page }) => {
 
   await page.waitForURL(baseUrl);
   await expect(page.getByRole('heading', { name: `Welcome ${email}` })).toBeVisible();
+
+  await deleteUser(email);
 });

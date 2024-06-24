@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { createUser, createUserOnSharedSpace, createUserWithSpace } from './db.utils';
+import { createUserOnSharedSpace, createUserWithSpace, deleteUser } from './db.utils';
 import { nanoid } from 'nanoid';
 
 const baseUrl = 'http://localhost:3000';
@@ -95,6 +95,10 @@ test('Collaborators can see a public list on a shared space', async ({ browser }
   await expect(secondUserPage.getByRole('heading', { name: newPublicList })).toBeVisible();
   await secondUserPage.waitForURL(firstUserPage.url());
   await expect(secondUserPage.getByPlaceholder('Type a title and press enter')).toBeVisible();
+
+  // Remove User from DB:
+  await deleteUser(firstUser.email);
+  await deleteUser(secondUser.email);
 });
 
 test('Collaborators can not see a private list on a shared space', async ({ browser }) => {
@@ -187,4 +191,8 @@ test('Collaborators can not see a private list on a shared space', async ({ brow
   await secondUserPage.goto(unreacheablePath);
 
   await expect(secondUserPage.getByRole('heading', { name: 'This page could not be found.' })).toBeVisible();
+
+  // Remove User from DB:
+  await deleteUser(firstUser.email);
+  await deleteUser(secondUser.email);
 });

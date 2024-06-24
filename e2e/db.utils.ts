@@ -77,3 +77,19 @@ export const resetDatabase = async () => {
     await prisma.$disconnect();
   }
 };
+
+export const deleteUser = async (email: string) => {
+  try {
+    await prisma.user.delete({
+      where: {
+        email: email,
+      },
+    });
+
+    console.log('User deleted successfully.');
+  } catch (error) {
+    console.error('Error deleting user from database:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+};

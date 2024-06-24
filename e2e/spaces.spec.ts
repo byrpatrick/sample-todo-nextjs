@@ -1,6 +1,6 @@
 import test, { expect } from '@playwright/test';
-import { createUser, createUserWithSpace } from './db.utils';
-import { nanoid } from 'nanoid';
+import { createUser, createUserWithSpace, deleteUser } from './db.utils';
+import { alphanumericId } from './utils';
 
 const baseUrl = 'http://localhost:3000';
 
@@ -36,7 +36,7 @@ test('Users can create a new space', async ({ page }) => {
   await spaceNameInput.click();
   await spaceNameInput.fill(spaceName);
 
-  const spaceSlug = 'quitolambda';
+  const spaceSlug = alphanumericId(5);
   const spaceSlugInput = page.getByLabel('Space slug');
   await spaceSlugInput.click();
   await spaceSlugInput.fill(spaceSlug);
@@ -46,6 +46,9 @@ test('Users can create a new space', async ({ page }) => {
   await expect(page.getByText("Space created successfully! You'll be redirected.")).toBeVisible();
   await page.waitForURL(`${baseUrl}/space/${spaceSlug}`);
   await expect(page.getByRole('heading', { name: spaceName, exact: true })).toBeVisible();
+
+  // Remove User from DB:
+  await deleteUser(existingUser.email);
 });
 
 test('Users can invite users to their space', async ({ browser }) => {
@@ -57,7 +60,7 @@ test('Users can invite users to their space', async ({ browser }) => {
   const secondUserPage = await secondUserContext.newPage();
 
   const firstUserPassword = '123456789';
-  const space = { name: 'Quito Lambda', slug: nanoid(5) };
+  const space = { name: 'Quito Lambda', slug: alphanumericId(5) };
   const firstUser = await createUserWithSpace(firstUserPassword, space);
 
   const secondUserPassword = '123456789*';
@@ -119,4 +122,8 @@ test('Users can invite users to their space', async ({ browser }) => {
 
   await secondUserPage.waitForURL(`${baseUrl}/space/${space.slug}`);
   await expect(secondUserPage.getByRole('heading', { name: space.name, exact: true })).toBeVisible();
+
+  // Remove User from DB:
+  await deleteUser(firstUser.email);
+  await deleteUser(secondUser.email);
 });

@@ -7,10 +7,10 @@ const baseURL = 'http://localhost:3000';
 export default defineConfig({
   timeout: 30 * 1000,
   testDir: './e2e',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 1,
+  workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
     baseURL: baseURL,
