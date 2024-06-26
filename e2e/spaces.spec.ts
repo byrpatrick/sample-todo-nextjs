@@ -6,13 +6,18 @@ const baseUrl = 'http://localhost:3000';
 
 test('Users can create a new space', async ({ page }) => {
   // Login with Existing User
+  // Arrange
   const password = '123456789';
   const existingUser = await createUser(password);
 
+  // Act
   await page.goto(baseUrl);
+
+  // Assert
   await page.waitForURL(`${baseUrl}/signin`);
   await expect(page.getByRole('heading', { name: 'Sign in to your account' })).toBeVisible();
 
+  // Act
   const emailInput = page.getByLabel('Your email');
   await emailInput.click();
   await emailInput.fill(existingUser.email);
@@ -23,31 +28,38 @@ test('Users can create a new space', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Login to your account' }).click();
 
+  // Assert
   await page.waitForURL(baseUrl);
   await expect(page.getByRole('heading', { name: `Welcome ${existingUser.email}` })).toBeVisible();
 
   // Create a new space
+  // Act
   await page.getByRole('link', { name: 'create a new one.' }).click();
   await page.waitForURL(`${baseUrl}/create-space`);
   await expect(page.getByRole('heading', { name: 'Create a space' })).toBeVisible();
 
+  // Arrange
   const spaceName = 'Quito Lambda';
+  const spaceSlug = alphanumericId(5);
+
+  // Act
   const spaceNameInput = page.getByLabel('Space name');
   await spaceNameInput.click();
   await spaceNameInput.fill(spaceName);
 
-  const spaceSlug = alphanumericId(5);
   const spaceSlugInput = page.getByLabel('Space slug');
   await spaceSlugInput.click();
   await spaceSlugInput.fill(spaceSlug);
 
   await page.getByRole('button', { name: 'Create' }).click();
 
+  // Assert
   await expect(page.getByText("Space created successfully! You'll be redirected.")).toBeVisible();
   await page.waitForURL(`${baseUrl}/space/${spaceSlug}`);
   await expect(page.getByRole('heading', { name: spaceName, exact: true })).toBeVisible();
 
   // Remove User from DB:
+  // Clean-up/teardown
   await deleteUser(existingUser.email);
 });
 

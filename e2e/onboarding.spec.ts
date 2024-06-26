@@ -5,13 +5,18 @@ import { createUser, deleteUser } from './db.utils';
 const baseUrl = 'http://localhost:3000';
 
 test('can login as existing user', async ({ page }) => {
+  // Arrange
   const password = '123456789';
   const existingUser = await createUser(password);
 
+  // Act
   await page.goto(baseUrl);
   await page.waitForURL(`${baseUrl}/signin`);
+
+  // Assert
   await expect(page.getByRole('heading', { name: 'Sign in to your account' })).toBeVisible();
 
+  // Act
   const emailInput = page.getByLabel('Your email');
   await emailInput.click();
   await emailInput.fill(existingUser.email);
@@ -22,9 +27,11 @@ test('can login as existing user', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Login to your account' }).click();
 
+  // Assert
   await page.waitForURL(baseUrl);
   await expect(page.getByRole('heading', { name: `Welcome ${existingUser.email}` })).toBeVisible();
 
+  // Clean-up/teardown
   await deleteUser(existingUser.email);
 });
 

@@ -6,6 +6,7 @@ const baseUrl = 'http://localhost:3000';
 
 test('Collaborators can see a public list on a shared space', async ({ browser }) => {
   // Create a browser with its own context for each user
+  // Arrange
   const firstUserContext = await browser.newContext();
   const firstUserPage = await firstUserContext.newPage();
 
@@ -20,10 +21,14 @@ test('Collaborators can see a public list on a shared space', async ({ browser }
   const secondUser = await createUserOnSharedSpace(secondUserPassword, { slug: space.slug });
 
   // Login with the first user
+  // Act
   await firstUserPage.goto(baseUrl);
+  
+  // Assert
   await firstUserPage.waitForURL(`${baseUrl}/signin`);
   await expect(firstUserPage.getByRole('heading', { name: 'Sign in to your account' })).toBeVisible();
 
+  // Act
   const emailInput = firstUserPage.getByLabel('Your email');
   await emailInput.click();
   await emailInput.fill(firstUser.email);
@@ -34,14 +39,19 @@ test('Collaborators can see a public list on a shared space', async ({ browser }
 
   await firstUserPage.getByRole('button', { name: 'Login to your account' }).click();
 
+  // Assert
   await firstUserPage.waitForURL(baseUrl);
   await expect(firstUserPage.getByRole('heading', { name: `Welcome ${firstUser.email}` })).toBeVisible();
 
   // Login with the second user
+  // Act
   await secondUserPage.goto(baseUrl);
+
+  // Assert
   await secondUserPage.waitForURL(`${baseUrl}/signin`);
   await expect(secondUserPage.getByRole('heading', { name: 'Sign in to your account' })).toBeVisible();
 
+  // Act
   const emailInputSecondUser = secondUserPage.getByLabel('Your email');
   await emailInputSecondUser.click();
   await emailInputSecondUser.fill(secondUser.email);
@@ -52,37 +62,50 @@ test('Collaborators can see a public list on a shared space', async ({ browser }
 
   await secondUserPage.getByRole('button', { name: 'Login to your account' }).click();
 
+  // Assert
   await secondUserPage.waitForURL(baseUrl);
   await expect(secondUserPage.getByRole('heading', { name: `Welcome ${secondUser.email}` })).toBeVisible();
 
   // Users Navigate to shared space
+  // Act
   await firstUserPage.getByRole('link', { name: space.name, exact: true }).click();
 
+  // Assert
   await firstUserPage.waitForURL(`${baseUrl}/space/${space.slug}`);
   await expect(firstUserPage.getByRole('heading', { name: space.name, exact: true })).toBeVisible();
 
+  // Act
   await secondUserPage.getByRole('link', { name: space.name, exact: true }).click();
 
+  // Assert
   await secondUserPage.waitForURL(`${baseUrl}/space/${space.slug}`);
   await expect(secondUserPage.getByRole('heading', { name: space.name, exact: true })).toBeVisible();
 
   // Create a public list with first user
+  // Act
   await firstUserPage.getByText('Create a list').click();
 
+  // Assert
   await expect(firstUserPage.getByRole('heading', { name: 'Create a Todo list' })).toBeVisible();
 
+  // Arrange
   const newPublicList = 'E2E Playwright!';
+
+  // Act
   const inputTodoAdmin = firstUserPage.getByPlaceholder('Title of your list');
   await inputTodoAdmin.click();
   await inputTodoAdmin.fill(newPublicList);
 
   await firstUserPage.getByRole('button', { name: 'Create' }).click();
 
+  // Assert
   await expect(firstUserPage.getByText('List created successfully!')).toBeVisible();
   await expect(firstUserPage.getByRole('heading', { name: newPublicList })).toBeVisible();
 
+  // Act
   await firstUserPage.getByRole('link', { name: newPublicList }).click();
 
+  // Assert
   await expect(firstUserPage.getByRole('heading', { name: newPublicList })).toBeVisible();
   await firstUserPage.waitForURL(/^http:\/\/localhost:3000\/space\/[^\/]+\/[^\/]+$/);
   await expect(firstUserPage.getByPlaceholder('Type a title and press enter')).toBeVisible();
@@ -90,13 +113,16 @@ test('Collaborators can see a public list on a shared space', async ({ browser }
   // Check that the second user can see and access the created list
   await expect(secondUserPage.getByRole('heading', { name: newPublicList })).toBeVisible();
 
+  // Act
   await secondUserPage.getByRole('link', { name: newPublicList }).click();
 
+  // Assert
   await expect(secondUserPage.getByRole('heading', { name: newPublicList })).toBeVisible();
   await secondUserPage.waitForURL(firstUserPage.url());
   await expect(secondUserPage.getByPlaceholder('Type a title and press enter')).toBeVisible();
 
   // Remove User from DB:
+  // Clean up/teardown
   await deleteUser(firstUser.email);
   await deleteUser(secondUser.email);
 });
